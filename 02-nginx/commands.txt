@@ -1,0 +1,50 @@
+#commonds
+mkdir -p ~/docker-labs/01-nginx && cd $_
+docker run -d --name web -p 8080:80 nginx:latest
+curl -I http://localhost:8080
+docker ps
+
+#Notes: 
+Step-by-step explanation:
+
+mkdir -p ~/docker-labs/01-nginx
+mkdir = make directory
+-p = create the whole directory path if it doesn’t exist (no error if it already exists)
+~/ = your home directory
+&&
+Logical AND operator.
+Runs the next command only if the previous one succeeds.
+cd $_
+cd = change directory
+$_ = in Bash, this refers to the last argument of the previous command
+(in this case: ~/docker-labs/01-nginx)
+So this moves you into the newly created directory.
+
+docker run -d --name web -p 8080:80 nginx:latest
+
+docker run
+Runs a new container from a given image.
+
+-d (detached mode)
+Runs the container in the background so your terminal isn’t locked.
+
+--name web
+Assigns the container a custom name: web
+
+Without this, Docker would give it a random funny name like eager_lamarr.
+
+-p 8080:80
+Port mapping:
+
+8080 = port on your host (your machine)
+
+80 = port inside the container (default Nginx HTTP port)
+
+This means: when you open http://localhost:8080, Docker forwards the request to port 80 inside the container.
+
+nginx:latest
+The Docker image to use:
+
+nginx = official Nginx image from Docker Hub
+
+:latest = use the latest available version (optional tag — you could also specify nginx:1.27 for example).
