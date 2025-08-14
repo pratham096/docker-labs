@@ -1,0 +1,10 @@
+#Docker : commands
+docker pull hello-world
+docker run hello-world
+
+
+# Notes.md
+- Pulled the `hello-world` image from Docker Hub.
+- Verified container runs successfully and prints message.
+
+
