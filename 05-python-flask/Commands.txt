@@ -1,0 +1,110 @@
+Flask App – Dockerfile + Build + Run
+1) Project structure
+mkdir -p ~/docker-labs/04-flask && cd ~/docker-labs/04-flask
+cat > app.py <<'PY'
+from flask import Flask
+app = Flask(__name__)
+@app.get('/')
+def home():
+return 'Hello from Flask in Docker!'
+if __name__ == '__main__':
+app.run(host='0.0.0.0', port=5000)
+PY
+cat > requirements.txt <<'REQ'
+Flask==3.0.3
+REQ
+-----------------------------------------------------------------------------------------------------------------------------------
+2) Dockerfile (line‑by‑line explained)
+
+Create Dockerfile :
+1# 1) Choose a base image that already has Python
+FROM python:3.12-slim
+# 2) Set a working directory inside the image
+WORKDIR /app
+# 3) Copy only requirements first to leverage Docker layer caching
+COPY requirements.txt ./
+# 4) Install Python dependencies (no cache to reduce layer size)
+RUN pip install --no-cache-dir -r requirements.txt
+# 5) Copy the application source code
+COPY app.py ./
+# 6) Expose the port your app listens on (documentation only)
+EXPOSE 5000
+# 7) Default process to run when the container starts
+CMD ["python", "app.py"]
+-----------------------------------------------------------------------------------------------------------------------------------
+Explanation:
+1. FROM python:3.12-slim → Small Debian-based Python image.
+2. WORKDIR /app → All subsequent commands run in /app .
+3. COPY requirements.txt ./ → Copy dependency list first to cache pip layer.
+4. RUN pip install --no-cache-dir -r requirements.txt → Install deps without pip
+cache.
+5. COPY app.py ./ → Copy your app code.
+6. EXPOSE 5000 → Documents that the app listens on 5000 (optional but helpful).
+7. CMD [...] → The container’s main process.
+-----------------------------------------------------------------------------------------------------------------------------------
+3) Build & run
+docker build -t flask-app:1.0 .
+docker run -d --name flask -p 5000:5000 flask-app:1.0
+curl http://localhost:5000
+# -> Hello from Flask in Docker!
+-----------------------------------------------------------------------------------------------------------------------------------
+
+B) .dockerignore to reduce image size
+Create .dockerignore next to your Dockerfile :
+2__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.cache/
+.venv/
+venv/
+.git/
+.gitignore
+.DS_Store
+-----------------------------------------------------------------------------------------------------------------------------------
+Explanation:
+• Prevents copying caches, venvs, and Git metadata into the build context → smaller, faster builds.
+Rebuild to see the effect on build time and context size:
+docker build -t flask-app:1.1 .
+C) Tag Images & Push to Docker Hub
+Replace YOUR_DOCKERHUB_USERNAME with your actual Docker Hub username.
+# 1) Log in (follow prompts)
+docker login
+# 2) Tag the image for Docker Hub namespace
+docker tag flask-app:1.1 YOUR_DOCKERHUB_USERNAME/flask-app:1.1
+# 3) Push it
+docker push YOUR_DOCKERHUB_USERNAME/flask-app:1.1
+-----------------------------------------------------------------------------------------------------------------------------------
+Notes:
+• Private vs public repo is controlled in Docker Hub settings.
+• If you use 2FA, you’ll need a PAT (personal access token) as the password.
+-----------------------------------------------------------------------------------------------------------------------------------
+
+D) Optimize Image Size with Alpine Base
+Create Dockerfile.alpine to compare:
+3# Alpine images are smaller and use musl libc + busybox
+FROM python:3.12-alpine
+WORKDIR /app
+# Install runtime deps first if you need any compiled wheels (none for pure
+Flask)
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+COPY app.py ./
+EXPOSE 5000
+CMD ["python", "app.py"]
+Build & run:
+docker build -f Dockerfile.alpine -t flask-app:alpine .
+docker run -d --name flask-alpine -p 5001:5000 flask-app:alpine
+curl http://localhost:5001
+
+-----------------------------------------------------------------------------------------------------------------------------------
+Tips for Alpine:
+• If some packages need compilation, add build-base and headers temporarily:
+RUN apk add --no-cache build-base
+(Then consider multi-stage to avoid shipping build tools.)
+• Always use --no-cache-dir with pip .
+• Keep requirements.txt minimal/pinned.
+
+
+
+
