@@ -1,0 +1,59 @@
+1.6 Bind mount host folder
+***Bind mount a folder from host to container***
+Skills Covered : `-v` flag, volume mounting     
+
+mkdir -p ~/docker-labs/03-nginx-mount/html && cd ~/docker-labs/03-nginx-mount
+echo "Hello from host" > html/index.html
+docker run -d --name web -p 8080:80 -v "$PWD/html:/usr/share/nginx/html:ro" nginx
+curl http://localhost:8080
+docker rm -f web
+
+
+1. Create project folder structure
+mkdir -p ~/docker-labs/03-nginx-mount/html && cd ~/docker-labs/03-nginx-mount
+
+    mkdir -p → Creates the directory ~/docker-labs/03-nginx-mount/html.
+    The -p ensures that if parent directories don’t exist, they’ll be created.
+    cd → Moves into ~/docker-labs/03-nginx-mount.
+
+📍 Purpose: Set up a workspace with a html folder to store website files.
+
+2. Create an HTML file
+
+echo "Hello from host" > html/index.html
+
+   Writes "Hello from host" into html/index.html.
+   This will be the page served by Nginx.
+
+3. Run Nginx container with a bind mount
+docker run -d --name web -p 8080:80 -v "$PWD/html:/usr/share/nginx/html:ro" nginx
+
+    -d → Detached mode (run in background).
+    --name web → Names the container web.
+    -p 8080:80 → Maps port 8080 on your host → port 80 in the container.
+    -v "$PWD/html:/usr/share/nginx/html:ro" → Bind mounts the html folder from your host into /usr/share/nginx/html inside the container read-only (:ro).
+     $PWD/html → Your local folder with index.html.
+    /usr/share/nginx/html → Default folder where Nginx serves web files.
+    nginx → Uses the official Nginx image from Docker Hub.
+
+📍 Purpose: Serve files from your host machine directly through Nginx without rebuilding an image.
+
+4. Test the page
+curl http://localhost:8080
+Sends an HTTP request to the container via port 8080.
+
+Should output:
+Hello from host
+
+
+5. Remove the container
+docker rm -f web
+-f → Force stop and remove the container in one go.
+
+📍 Purpose: Clean up the running container but keep your files (html/index.html stays on host).
+
+
+
+
+
+

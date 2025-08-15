@@ -1,0 +1,20 @@
+1.3 Logs & exec
+docker logs --tail 50 mysql
+docker exec -it mysql bash
+exit
+
+#docker logs → Displays logs from the container named mysql.
+#--tail 50 → Shows only the last 50 log lines instead of the entire history.
+#Useful for checking recent activity without scrolling through huge logs.
+
+#docker exec → Run a command inside a running container.
+#-it → Interactive mode with a terminal (so you can type commands).
+#mysql → The container name.
+#bash → The shell to run inside the container.
+
+1.4 Lifecycle (stop/start/remove)
+docker stop mysql
+docker start mysql
+docker rm -f mysql
+docker volume rm mysql_data
+

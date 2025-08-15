@@ -1,0 +1,87 @@
+Pull MySQL image and run it with custom root password
+
+mkdir -p /home/pratham/Desktop/docker-labs/03-mysql && cd $_
+docker volume create mysql_data
+docker run -d --name mysql \
+-e MYSQL_ROOT_PASSWORD=admin \ 
+-e MYSQL_DATABASE=appdb \
+-v mysql_data:/var/lib/mysql \
+-p 3306:3306 mysql:8
+
+docker exec -it mysql mysql -uroot -psecret -e "SHOW DATABASES;"
+
+1. Create and move into the lab folder:
+mkdir -p ~/docker-labs/02-mysql && cd $_
+mkdir -p → Creates the folder ~/docker-labs/02-mysql, making parent folders if needed.
+
+&& → Only run the next command if the previous one succeeded.
+
+cd $_ → Change directory to the last argument of the previous command (~/docker-labs/02-mysql).
+
+📍 Purpose: Keeps each Docker lab project organized in its own folder.
+
+2. Create a named Docker volume
+
+docker volume create mysql_data
+
+Creates a named volume called mysql_data.
+
+Volumes are persistent storage managed by Docker — data survives even if the container is deleted.
+
+By default, Docker stores it somewhere like /var/lib/docker/volumes/mysql_data/_data.
+
+📍 Purpose: Store MySQL’s database files outside the container so they aren’t lost when the container is removed.
+
+3. Run the MySQL container
+
+docker run -d --name mysql \
+  -e MYSQL_ROOT_PASSWORD=secret \
+  -e MYSQL_DATABASE=appdb \
+  -v mysql_data:/var/lib/mysql \
+  -p 3306:3306 mysql:8
+
+Let’s split this up:
+
+docker run -d --name mysql \
+docker run → Start a new container.
+-d → Detached mode (run in background).
+--name mysql → Give the container the name mysql for easy reference.
+
+-e MYSQL_ROOT_PASSWORD=secret \
+-e sets environment variables inside the container.
+MYSQL_ROOT_PASSWORD → Required by the MySQL image to set the root user password.
+Here, the root password will be secret.
+
+-e MYSQL_DATABASE=appdb \
+Tells the container to create a database named appdb at startup.
+
+-v mysql_data:/var/lib/mysql \
+Mounts the Docker volume mysql_data into /var/lib/mysql inside the container.
+/var/lib/mysql is where MySQL stores all its data.
+Ensures data persists even if the container is deleted.
+
+-p 3306:3306
+Maps port 3306 on your host → port 3306 inside the container (default MySQL port).
+Lets you connect from MySQL clients (e.g., mysql CLI, DBeaver, or another app).
+
+mysql:8
+Use the MySQL image from Docker Hub, version 8.x.
+📍 Purpose: Start a MySQL server with a database ready to use, persist data, and allow connections.
+
+
+4. Check container logs
+docker logs -f mysql
+docker logs → Shows logs from the container named mysql.
+-f → Follow mode (live updates like tail -f).
+You wait until you see something like:
+
+End Result:
+You now have a running MySQL 8 container named mysql.
+
+It has:
+root password: secret
+default DB: appdb
+persistent storage in mysql_data
+listening on port 3306 for connections.
+
+

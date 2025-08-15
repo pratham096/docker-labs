@@ -1,0 +1,55 @@
+1️⃣ Beginner Level – Docker Fundamentals
+Goal: Be comfortable with basic Docker commands and concepts.
+| Scenario                                                  | Skills Covered                                  |
+| --------------------------------------------------------- | ----------------------------------------------- |
+| **Run an Nginx container and expose it on port 8080**     | `docker run`, port mapping, container lifecycle |
+| **Pull MySQL image and run it with custom root password** | `docker pull`, environment variables            |
+| **Check logs and exec into a running container**          | `docker logs`, `docker exec`                    |
+| **Stop, start, and remove containers/images**             | `docker stop`, `docker rm`, `docker rmi`        |
+| **Inspect a container’s details**                         | `docker inspect`, JSON output parsing           |
+| **Bind mount a folder from host to container**            | `-v` flag, volume mounting                      |
+| **Create and use named volumes**                          | `docker volume create`                          |
+|---------------------------------------------------------- | ----------------------------------------------- |
+2️⃣ Intermediate Level – Building & Managing Images
+Goal: Learn to build, optimize, and manage custom images.
+| Scenario                                        | Skills Covered                   |
+| ----------------------------------------------- | -------------------------------- |
+| **Write a Dockerfile for a Python Flask app**   | `FROM`, `COPY`, `RUN`, `CMD`     |
+| **Build the image and run it**                  | `docker build -t flask-app .`    |
+| **Use `.dockerignore` to reduce image size**    | Ignoring unnecessary files       |
+| **Tag images and push to Docker Hub**           | `docker tag`, `docker push`      |
+| **Optimize image size using Alpine base image** | Smaller, production-ready images |
+| **Run multi-stage builds for a Node.js app**    | Build & runtime separation       |
+
+3️⃣ DevOps-Oriented – Multi-Container & Networking
+Goal: Simulate real microservices setups.
+| Scenario                                        | Skills Covered                                 |
+| ----------------------------------------------- | ---------------------------------------------- |
+| **Run Nginx + MySQL + PHP containers together** | `docker network create`, custom bridge network |
+| **Use Docker Compose to define services**       | `docker-compose.yml` basics                    |
+| **Scale services using Compose**                | `docker-compose up --scale web=3`              |
+| **Configure persistent MySQL storage**          | Volumes in Compose                             |
+| **Link containers via DNS names**               | Container networking                           |
+
+4️⃣ Advanced – CI/CD & Production-Like Workflows
+Goal: Practice what DevOps engineers actually do.
+| Scenario                                                | Skills Covered                        |
+| ------------------------------------------------------- | ------------------------------------- |
+| **Automate builds in Jenkins using Docker agents**      | Jenkins pipeline with `docker` plugin |
+| **Set up a private Docker Registry**                    | Self-hosted registry                  |
+| **Implement environment-specific configs with Compose** | `.env` files                          |
+| **Run integration tests inside Docker**                 | Test containers                       |
+| **Use healthchecks for containers**                     | `HEALTHCHECK` in Dockerfile           |
+| **Simulate blue-green deployment with Nginx**           | Routing to two app versions           |
+
+
+5️⃣ Troubleshooting & Monitoring
+Goal: Handle real-world issues.
+| Scenario                                          | Skills Covered                  |
+| ------------------------------------------------- | ------------------------------- |
+| **Check container logs for errors**               | `docker logs`                   |
+| **View container resource usage**                 | `docker stats`                  |
+| **Debug network connectivity between containers** | `ping`, `curl` inside container |
+| **Inspect layer history of an image**             | `docker history`                |
+| **Clean unused images/containers**                | `docker system prune`           |
+

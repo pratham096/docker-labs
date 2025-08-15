@@ -1,0 +1,78 @@
+
+
+💡 Key takeaway:
+A Docker volume stores data outside of the container’s writable layer, so it survives container deletion and can be reused by other containers.
+
+
+ **Create and use named volumes**  
+ `docker volume create`     
+docker volume create site_data
+docker run -d --name n1 -p 8080:80 -v site_data:/usr/share/nginx/html nginx
+docker exec n1 bash -lc 'echo hi > /usr/share/nginx/html/index.html'
+curl http://localhost:8080
+docker rm -f n1
+docker run -d --name n2 -p 8080:80 -v site_data:/usr/share/nginx/html nginx
+curl http://localhost:8080   # same content persists
+docker rm -f n2 && docker volume rm site_data
+
+1. Create a named Docker volume
+docker volume create site_data
+
+# Makes a persistent volume called site_data.
+# Lives under Docker’s storage (e.g., /var/lib/docker/volumes/site_data/_data).
+# Empty at this point.
+
+2. Run Nginx with the volume mounted
+docker run -d --name n1 -p 8080:80 -v site_data:/usr/share/nginx/html nginx
+
+# Starts an Nginx container named n1.
+# Mounts site_data into /usr/share/nginx/html (Nginx’s web root).
+# Since the volume is empty, Nginx copies its default index.html into it.
+
+3. Write custom content into the container (and volume)
+docker exec n1 bash -lc 'echo hi > /usr/share/nginx/html/index.html'
+
+# Opens a shell inside container n1.
+# Writes hi into /usr/share/nginx/html/index.html.
+# Because /usr/share/nginx/html is backed by the site_data volume, this change is saved in the volume, not just the container.
+
+4. Test the site
+curl http://localhost:8080
+
+Should return:hi
+Confirms your change is live.
+
+5. Remove the first container
+docker rm -f n1
+
+# Stops and deletes container n1.
+# Volume site_data remains because removing a container does not remove its volumes.
+
+6. Start a new container using the same volume
+docker run -d --name n2 -p 8080:80 -v site_data:/usr/share/nginx/html nginx
+
+# Creates a fresh Nginx container named n2.
+# Mounts the existing site_data volume.
+# Since the volume already contains your modified index.html, Nginx serves the same hi content.
+
+7. Confirm the content persists
+curl http://localhost:8080
+
+Output is still:hi
+
+# Shows that volumes persist data across container lifecycles.
+
+8. Clean up container & volume
+docker rm -f n2 && docker volume rm site_data
+
+# Removes container n2.
+# Deletes volume site_data — data is gone permanently.
+
+💡 Key takeaway:
+A Docker volume stores data outside of the container’s writable layer, so it survives container deletion and can be reused by other containers.
+
+
+
+
+
+
